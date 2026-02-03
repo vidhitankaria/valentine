@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Be My Valentine 💖</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(to bottom right, #ff9a9e, #fad0c4);
+    text-align: center;
+    overflow-x: hidden;
+}
+
+.container {
+    background: #fff0f5;
+    max-width: 90%;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(255,105,180,0.5);
+}
+
+h2 { color: #ff1493; }
+
+.option {
+    display: block;
+    background: #ffb6c1;
+    margin: 10px auto;
+    padding: 12px;
+    width: 90%;
+    border-radius: 20px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.option:hover {
+    background: #ff69b4;
+    color: white;
+}
+
+img {
+    width: 220px;
+    border-radius: 15px;
+    margin: 15px 0;
+}
+
+.heart {
+    position: fixed;
+    font-size: 20px;
+    animation: float 5s linear infinite;
+}
+
+@keyframes float {
+    from { bottom: -10px; opacity: 1; }
+    to { bottom: 100%; opacity: 0; }
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<audio autoplay loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3">
+</audio>
+
+<canvas id="celebration"></canvas>
+
+<div class="container" id="quiz"></div>
+
+<script>
+let name = prompt("Hey cutie 💕 What's your name?");
+if(!name) name = "My Love";
+
+const questions = [
+{
+q: "What was the 1st thing we ate together?",
+img: "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
+o: ["Pani puri", "Bhel", "Sev puri", "Pizza"],
+a: "Sev puri"
+},
+{
+q: "What was my 1st birthday gift you gave me?",
+img: "https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif",
+o: ["Flowers", "Ring", "Chocolates", "Mug"],
+a: "Mug"
+},
+{
+q: "Which was my 1st phone?",
+img: "https://media.giphy.com/media/l4FGuhL4U2WyjdkaY/giphy.gif",
+o: ["Lenovo", "Redmi", "Oppo", "Motto"],
+a: "Lenovo"
+},
+{
+q: `Will you be my Valentine, ${name}? 💖`,
+img: "https://media.giphy.com/media/26FLdmIp6wJr91JAI/giphy.gif",
+o: ["Yes", "No"]
+},
+{
+q: "Will you be my Valentine? 🥺",
+img: "https://media.giphy.com/media/ROF8OQvDmxytW/giphy.gif",
+o: ["Yes", "Are you really sure"]
+},
+{
+q: "Will you be my Valentine? 😭",
+img: "https://media.giphy.com/media/1BXa2alBjrCXC/giphy.gif",
+o: ["Yesss", "I am gonna cry"]
+},
+{
+q: "LAST CHANCE 😳❤️",
+img: "https://media.giphy.com/media/Z21HJj2kz9uBG/giphy.gif",
+o: ["Yessss", "Hell yessss"]
+}
+];
+
+let index = 0;
+
+function loadQuestion() {
+    const q = questions[index];
+    let html = `<h2>${q.q}</h2><img src="${q.img}">`;
+
+    q.o.forEach(opt => {
+        if(opt.toLowerCase().includes("no") || opt.includes("sure") || opt.includes("cry")) {
+            html += `<button class="option" onmouseover="runAway(this)" onclick="next('${opt}')">${opt}</button>`;
+        } else {
+            html += `<button class="option" onclick="next('${opt}')">${opt}</button>`;
+        }
+    });
+
+    document.getElementById("quiz").innerHTML = html;
+}
+
+function runAway(btn) {
+    btn.style.position = "absolute";
+    btn.style.left = Math.random()*80 + "vw";
+    btn.style.top = Math.random()*80 + "vh";
+}
+
+function next(answer) {
+    if(index < 3 && answer !== questions[index].a) {
+        alert("Wrong 😝 Try again cutie!");
+        return;
+    }
+
+    if(index === 3 && answer === "Yes") {
+        finale();
+        return;
+    }
+
+    index++;
+    loadQuestion();
+}
+
+function finale() {
+    document.getElementById("quiz").innerHTML = `
+    <h2>YAYYYYY ${name} 💖💖💖</h2>
+    <img src="https://media.giphy.com/media/l4FGpPki5v2Bcd6Ss/giphy.gif">
+    <h2>You are officially MY Valentine 💍❤️</h2>`;
+    startCelebration();
+}
+
+loadQuestion();
+
+// floating hearts
+setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 5000);
+}, 300);
+
+// CONFETTI + FIREWORKS
+function startCelebration() {
+    const canvas = document.getElementById("celebration");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    for(let i=0;i<200;i++){
+        particles.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            r: Math.random()*6+2,
+            dx: Math.random()*4-2,
+            dy: Math.random()*4-2,
+            color: `hsl(${Math.random()*360},100%,60%)`
+        });
+    }
+
+    function animate(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p=>{
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+            ctx.fillStyle=p.color;
+            ctx.fill();
+            p.x+=p.dx;
+            p.y+=p.dy;
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+</script>
+
+</body>
+</html>
